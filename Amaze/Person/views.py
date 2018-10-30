@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from Person.models import Person
 
-#认证装饰器 未登录时，跳转登入页面
+#认证装饰器 未登录时，跳转登入页面 
 def log_in(func):
     def wrapper(request,*args,**kwargs):
         if not request.session.get("useremail"):
