@@ -3,6 +3,7 @@ from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from Person.models import Person,Teacher,Course
+from PIL.Image import Image
 
 #认证装饰器 未登录时，跳转登入页面
 def log_in(func):
@@ -69,6 +70,7 @@ def PersonDetail(request,id):
         person.mobilephone=request.POST['mobilephone']
         person.email = request.POST['email']
         person.modifydate=timezone.now()
+        person.headimg = request.FILES.get('img')
         person.save()
         return HttpResponseRedirect(reverse('personlist',kwargs={'page':1}))
 
