@@ -90,6 +90,7 @@ def PersonAdd(request):
         person.email = request.POST['email']
         person.createdate=timezone.now()
         person.modifydate=timezone.now()
+        person.headimg = request.FILES.get('img')
         person.save()
         return HttpResponseRedirect(reverse('personlist',kwargs={'page':1}))
 

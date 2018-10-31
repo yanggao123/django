@@ -12,11 +12,19 @@
     <div class="am-g">
 
       <div class="am-u-sm-12 am-u-md-4 am-u-md-push-8">
-
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-bd">
+            <div class="am-g">
+              <div class="am-u-md-4">
+                <img class="am-img-circle am-img-thumbnail" src="/media/{{ person.headimg }}" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
-        <form class="am-form am-form-horizontal" method="post" action="{% url 'persondetail' person.id %}">
+        <form class="am-form am-form-horizontal" method="post" action="{% url 'persondetail' person.id %}" enctype="multipart/form-data">
             {% csrf_token %}
           <div class="am-form-group">
             <label for="user-name" class="am-u-sm-3 am-form-label">姓名</label>
@@ -45,7 +53,12 @@
               <input type="number" name="age" placeholder="输入你的年龄" value="{{ person.age }}">
             </div>
           </div>
-
+ <div class="am-form-group">
+            <label for="user-phone" class="am-u-sm-3 am-form-label">头像</label>
+            <div class="am-u-sm-9">
+              <input type="file" name="img" >
+            </div>
+          </div>
 
           <div class="am-form-group">
             <div class="am-u-sm-9 am-u-sm-push-3">
