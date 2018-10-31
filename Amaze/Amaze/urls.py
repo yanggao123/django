@@ -24,8 +24,16 @@ urlpatterns = [
     path('index/', person_views.Index,name='index'),
     path('userinfo/', person_views.UserInfo,name='userinfo'),
     path('personlist/<int:page>/', person_views.PersonList,name='personlist'),
-    path('teacherlist/', person_views.TeacherList,name='teacherlist'),
     path('persondetail/<int:id>/', person_views.PersonDetail,name='persondetail'),
     path('persondelete/<int:id>/', person_views.PersonDelete, name='persondelete'),
     path('personadd/', person_views.PersonAdd, name='personadd'),
+    path('teacherlist/<int:page>/', person_views.TeacherList,name='teacherlist'),
+    path('teacherdetail/<int:id>/', person_views.TeacherDetail, name='teacherdetail'),
+    path('teacherdelete/<int:id>/', person_views.TeacherDelete, name='teacherdelete'),
+    path('teacheradd/', person_views.TeacherAdd, name='teacheradd'),
+    path('courselist/<int:page>/', person_views.CourseList,name='courselist'),
+    path('coursedetail/<int:id>/', person_views.CourseDetail, name='coursedetail'),
+    path('coursedelete/<int:id>/', person_views.CourseDelete, name='coursedelete'),
+    path('courseadd/', person_views.CourseAdd, name='courseadd'),
+
 ]
