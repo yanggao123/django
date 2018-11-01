@@ -1,8 +1,8 @@
-from django.shortcuts import render,reverse
+from django.shortcuts import render,reverse,render_to_response
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.http import HttpResponseRedirect
 from django.utils import timezone
-from Person.models import Person,Teacher,Course
+from Person.models import Person,Teacher,Course,Course_File
 from PIL.Image import Image
 
 #认证装饰器 未登录时，跳转登入页面
@@ -94,6 +94,17 @@ def PersonAdd(request):
         person.save()
         return HttpResponseRedirect(reverse('personlist',kwargs={'page':1}))
 
+def PersonEnrollList(request,id):
+    if request.method.upper()=="GET":
+        courses=Course.objects.all()
+        person=Person.objects.get(id=id)
+        return render(request,'Person/PersonEnrollList.html',{'courses':courses,'person':person})
+    else:
+        person = Person.objects.get(id=id)
+        person.courses.set(request.POST.getlist('courses_id'))
+        person.save()
+        return  HttpResponseRedirect(reverse('personlist',kwargs={'page':1}))
+
 def TeacherList(request,page):
     persons=Teacher.objects.all()
     paginator=Paginator(persons,1)
@@ -179,3 +190,42 @@ def CourseAdd(request):
 def CourseDelete(request,id):
     Course.objects.get(id=id).delete()
     return HttpResponseRedirect(reverse('courselist', kwargs={'page': 1}))
+
+def CourseFileList(request,id,page):
+    coursefilelist=Course_File.objects.filter(courseid=id)
+    paginator=Paginator(coursefilelist,1)
+    try:
+        coursefiles=paginator.page(page)
+    except PageNotAnInteger:
+        coursefiles=paginator.page(1)
+    except EmptyPage:
+        coursefiles=paginator.page(paginator.num_pages)
+    return render(request,'Person/CourseFileList.html',{'coursefiles':coursefiles,'courseid':id})
+
+def CourseFileUpload(request,courseid):
+    if request.method.upper()=="GET":
+        return render(request,'Person/CourseFileUpload.html',{'courseid':courseid})
+    else:
+        coursefile=Course_File()
+        coursefile.courseid=Course.objects.get(id=courseid)
+        coursefile.createdate=timezone.now()
+        coursefile.filename=request.FILES.get('file')
+        coursefile.save()
+        return HttpResponseRedirect(reverse('coursefilelist',kwargs={'page':1,'id':courseid}))
+
+def CourseFileDelete(request,id,courseid):
+    Course_File.objects.get(id=id).delete()
+    return HttpResponseRedirect(reverse('coursefilelist', kwargs={'page': 1,'id':courseid}))
+
+def page_not_found(request):
+    response = render_to_response('Person/404.html', {})
+    response.status_code = 404
+    return response
+
+def page_error(request):
+    response = render_to_response('Person/500.html', {})
+    response.status_code = 500
+    return response
+
+
+

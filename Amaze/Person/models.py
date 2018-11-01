@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from django.utils.timezone import timedelta
 
 # Create your models here.
 class Person(models.Model):
@@ -10,6 +12,12 @@ class Person(models.Model):
     createdate=models.DateTimeField(verbose_name='创建时间',auto_now_add=True)
     modifydate=models.DateTimeField(verbose_name='修改时间',auto_now_add=True)
     headimg=models.ImageField(verbose_name='头像',upload_to='headimg')
+    courses=models.ManyToManyField("Course",verbose_name='选修课程')
+    def personflag(self):
+        if self.createdate<timezone.now()+timedelta(days = -1):
+            return '1 days earlier'
+        else:
+            return ''
 
 class Teacher(models.Model):
     email=models.EmailField(verbose_name='电子邮箱',max_length=30)
@@ -27,4 +35,9 @@ class Course(models.Model):
     createdate = models.DateTimeField(verbose_name='创建时间', auto_now=True)
     modifyby = models.CharField(verbose_name='修改人', max_length=10)
     modifydate = models.DateTimeField(verbose_name='修改时间', auto_now=True)
-    teachers=models.ManyToManyField("Teacher")
+    teachers=models.ManyToManyField("Teacher",verbose_name='授课老师')
+
+class Course_File(models.Model):
+    courseid=models.ForeignKey("Course",on_delete=models.CASCADE)
+    filename=models.FileField(verbose_name='课程附件',upload_to='file')
+    createdate = models.DateTimeField(verbose_name='创建时间', auto_now=True)

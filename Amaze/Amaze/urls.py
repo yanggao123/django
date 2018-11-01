@@ -29,6 +29,7 @@ urlpatterns = [
     path('persondetail/<int:id>/', person_views.PersonDetail,name='persondetail'),
     path('persondelete/<int:id>/', person_views.PersonDelete, name='persondelete'),
     path('personadd/', person_views.PersonAdd, name='personadd'),
+    path('personenrolllist/<int:id>/', person_views.PersonEnrollList, name='personenrolllist'),
     path('teacherlist/<int:page>/', person_views.TeacherList,name='teacherlist'),
     path('teacherdetail/<int:id>/', person_views.TeacherDetail, name='teacherdetail'),
     path('teacherdelete/<int:id>/', person_views.TeacherDelete, name='teacherdelete'),
@@ -37,5 +38,13 @@ urlpatterns = [
     path('coursedetail/<int:id>/', person_views.CourseDetail, name='coursedetail'),
     path('coursedelete/<int:id>/', person_views.CourseDelete, name='coursedelete'),
     path('courseadd/', person_views.CourseAdd, name='courseadd'),
+    path('coursefilelist/<int:id>/<int:page>/', person_views.CourseFileList, name='coursefilelist'),
+    path('coursefileupload/<int:courseid>/', person_views.CourseFileUpload, name='coursefileupload'),
+    path('coursefiledelete/<int:id>/<int:courseid>/', person_views.CourseFileDelete, name='coursefiledelete'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = person_views.page_not_found
+handler500 = person_views.page_error
+
+

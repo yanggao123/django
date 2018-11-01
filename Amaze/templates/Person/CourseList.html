@@ -55,6 +55,7 @@
               <td>
                 <div class="am-btn-toolbar">
                   <div class="am-btn-group am-btn-group-xs">
+                      <button class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> <a href="{% url 'coursefilelist' course.id 1 %}">课程附件</a></button>
                     <button class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span><a href="{% url 'coursedetail' course.id %}">编辑</a></button>
                     <button class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> <a href="{% url 'coursedelete' course.id %}">删除</a></button>
                   </div>

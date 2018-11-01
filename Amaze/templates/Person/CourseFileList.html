@@ -1,0 +1,98 @@
+{% extends 'Person/base.html' %}
+
+{% block body1 %}
+    <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">表格</strong> / <small>课程附件列表</small></div>
+    </div>
+
+    <div class="am-g">
+      <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+          <div class="am-btn-toolbar am-fl">
+            <div class="am-btn-group am-btn-group-xs">
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span><a href="{% url 'coursefileupload' courseid %}">新增</a></button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="am-u-md-3 am-cf">
+          <form>
+        <div class="am-fr">
+          <div class="am-input-group am-input-group-sm">
+
+            <input type="text" class="am-form-field" />
+                <span class="am-input-group-btn">
+                  <button class="am-btn am-btn-default" type="submit">搜索</button>
+                </span>
+
+          </div>
+        </div>
+          </form>
+      </div>
+    </div>
+
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <form class="am-form">
+          <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+                <th class="table-check"><input type="checkbox" /></th><th class="table-id">ID</th><th class="table-title">附件名称</th><th class="table-date">创建时间</th><th class="table-set">操作</th>
+              </tr>
+          </thead>
+          <tbody>
+{% for coursefile in coursefiles.object_list %}
+            <tr>
+              <td><input type="checkbox" value="{{ coursefile.id }}"/></td>
+                <td>{{ coursefile.id }}</td>
+              <td>
+                  <a target="_blank" href="/media/{{  coursefile.filename }}">{{ coursefile.filename }}
+              </a>
+              </td>
+
+              <td>{{ coursefile.createdate }}</td>
+              <td>
+                <div class="am-btn-toolbar">
+                  <div class="am-btn-group am-btn-group-xs">
+                    <button class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> <a href="{% url 'coursefiledelete' coursefile.id courseid %}">删除</a></button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+{% endfor %}
+          </tbody>
+        </table>
+          <div class="am-cf">
+  共 {{ coursefiles.paginator.count }} 条记录
+  <div class="am-fr">
+    <ul class="am-pagination">
+        {% if coursefiles.has_previous %}
+        <li><a href="{% url 'coursefilelist' courseid coursefiles.previous_page_number %}">«</a></li>
+        {% endif %}
+
+        {% for page in coursefiles.paginator.page_range %}
+        {% if page == coursefiles.number %} <li class="am-active" ><a href="{% url 'coursefilelist' courseid page %}">{{ page }}</a></li>
+        {% else %}
+             <li ><a href="{% url 'coursefilelist' courseid page %}">{{ page }}</a></li>
+        {% endif %}
+
+        {% endfor %}
+         {% if coursefiles.has_next %}
+          <li><a href="{% url 'coursefilelist' courseid coursefiles.next_page_number %}">»</a></li>
+         {% endif %}
+    </ul>
+  </div>
+</div>
+          <hr />
+          <p>注：.....</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+  <!-- content end -->
+{% endblock %}
