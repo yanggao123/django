@@ -20,6 +20,7 @@ from django.conf import settings
 from Person import views as person_views
 
 urlpatterns = [
+    path('', person_views.Login),
     path('admin/', admin.site.urls),
     path('login/', person_views.Login,name='login'),
     path('logout/', person_views.Logout, name='logout'),
@@ -43,10 +44,11 @@ urlpatterns = [
     path('coursefilelist/<int:id>/<int:page>/', person_views.CourseFileList, name='coursefilelist'),
     path('coursefileupload/<int:courseid>/', person_views.CourseFileUpload, name='coursefileupload'),
     path('coursefiledelete/<int:id>/<int:courseid>/', person_views.CourseFileDelete, name='coursefiledelete'),
+    path('bardemo/', person_views.BarDemo, name='bardemo'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = person_views.page_not_found
-handler500 = person_views.page_error
+handler404 = 'Person.views.page_not_found'
+handler500 = 'Person.views.page_error'
 
 

@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect,HttpResponse,StreamingHttpResponse
 from django.utils import timezone
 import xlwt
 import xlrd
+from pyecharts import Bar
 from Person.models import Person,Teacher,Course,Course_File,Person_UploadFile
 
 
@@ -18,7 +19,8 @@ def log_in(func):
 # Create your views here.
 def Login(request):
     if request.method.upper()=='GET':
-        return render(request, 'Person/Login.html')
+        password=request.COOKIES.get('password','')
+        return render(request, 'Person/Login.html',{'password':password})
     elif request.method.upper()=='POST':
         email=request.POST['email']
         password=request.POST['password']
@@ -27,7 +29,10 @@ def Login(request):
             if persons[0].password==password:
                 request.session['useremail'] = email
                 print(request.session['useremail'])
-                return render(request, 'Person/Index.html')
+                response = render_to_response('Person/Index.html', {})
+                if 'rememberpwd' in request.POST.keys():
+                    response.set_cookie('password', password)
+                return response
             else:
                 return render(request, 'Person/Login.html',{'message':'用户名或者密码错误'})
         else:
@@ -38,15 +43,22 @@ def Logout(request):
         del request.session['useremail']
     return HttpResponseRedirect(reverse('login'))
 
+def ForgetPassword(request):
+    if request.method.upper()=="GET":
+        return render(request,'Person/ForgetPassword.html')
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
 @log_in
 def Index(request):
     return render(request,'Person/Index.html')
-
+@log_in
 def UserInfo(request):
     useremail=request.session['useremail']
     print(useremail)
     return render(request, 'Person/UserInfo.html',{'useremail':useremail})
 
+@log_in
 def PersonList(request,page):
     #修改时间倒序
     persons=Person.objects.all().order_by("-modifydate")
@@ -60,6 +72,7 @@ def PersonList(request,page):
         students =paginator1.page (paginator1 .num_pages)
     return render(request, 'Person/PersonList.html',{'students':students})
 
+@log_in
 def PersonDownload(request):
     persons = Person.objects.all().order_by("-modifydate")
     excel = xlwt.Workbook()
@@ -262,13 +275,25 @@ def CourseFileDelete(request,id,courseid):
     Course_File.objects.get(id=id).delete()
     return HttpResponseRedirect(reverse('coursefilelist', kwargs={'page': 1,'id':courseid}))
 
+
+def BarDemo(request):
+    attr = ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+    v1 = [5, 20, 36, 10, 75, 90]
+    v2 = [10, 25, 8, 60, 20, 80]
+    bar = Bar("各商家产品销售情况",'子标题')
+    bar.add("商家A", attr, v1, is_stack=True)
+    bar.add("商家B", attr, v2, is_stack=True)
+    url='media/upload/Bar.html'
+    bar.render(url)
+    return  render(request,'Person/BarDemo.html',{'url':url})
+
 def page_not_found(request):
-    response = render_to_response('Person/404.html', {})
+    response = render_to_response('404.html', {})
     response.status_code = 404
     return response
 
 def page_error(request):
-    response = render_to_response('Person/500.html', {})
+    response = render_to_response('500.html', {})
     response.status_code = 500
     return response
 
