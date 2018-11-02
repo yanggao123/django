@@ -19,6 +19,11 @@ class Person(models.Model):
         else:
             return ''
 
+class Person_UploadFile(models.Model):
+    filename=models.FileField(verbose_name='文件',upload_to='upload')
+    createby=models.CharField(verbose_name='上传人',max_length=50)
+    createdate=models.DateTimeField(verbose_name='上传时间',auto_now_add=True)
+
 class Teacher(models.Model):
     email=models.EmailField(verbose_name='电子邮箱',max_length=30)
     mobilephone = models.CharField(verbose_name='手机', max_length=11)

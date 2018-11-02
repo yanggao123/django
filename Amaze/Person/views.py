@@ -1,9 +1,11 @@
 from django.shortcuts import render,reverse,render_to_response
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse,StreamingHttpResponse
 from django.utils import timezone
-from Person.models import Person,Teacher,Course,Course_File
-from PIL.Image import Image
+import xlwt
+import xlrd
+from Person.models import Person,Teacher,Course,Course_File,Person_UploadFile
+
 
 #认证装饰器 未登录时，跳转登入页面
 def log_in(func):
@@ -56,8 +58,51 @@ def PersonList(request,page):
         students =paginator1.page(1)
     except EmptyPage:
         students =paginator1.page (paginator1 .num_pages)
-
     return render(request, 'Person/PersonList.html',{'students':students})
+
+def PersonDownload(request):
+    persons = Person.objects.all().order_by("-modifydate")
+    excel = xlwt.Workbook()
+    sheet = excel.add_sheet('Sheet1', cell_overwrite_ok=True)
+    #Excel表头
+    sheet.write(0, 0, '姓名')
+    sheet.write(0, 1, '电子邮箱')
+    sheet.write(0, 2, '年龄')
+
+    index=1
+    for person in persons:
+        sheet.write(index, 0, person.username)
+        sheet.write(index, 1, person.email)
+        sheet.write(index, 2, person.age)
+        index+=1
+
+    excel.save('media/upload/student.xls')
+    response = StreamingHttpResponse(open('media/upload/student.xls','rb'))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="student.xls"'
+    return response
+
+def PersonUpload(request):
+    if request.method.upper()=="GET":
+        return render(request,'Person/PersonUpload.html')
+    else:
+        uploadFile=Person_UploadFile()
+        uploadFile.filename=request.FILES.get('file')
+        uploadFile.save()
+
+        excel=xlrd.open_workbook('media/'+uploadFile.filename.name)
+        sheet=excel.sheet_by_index(0)
+        rowcount=sheet.nrows
+        for index in range(1,rowcount):
+            row=sheet.row_values(index)
+            person=Person()
+            person.username=row[0]
+            person.email=row[1]
+            person.age=row[2]
+            person.createdate=timezone.now()
+            person.modifydate=timezone.now()
+            person.save()
+        return HttpResponseRedirect(reverse('personlist', kwargs={'page': 1}))
 
 def PersonDetail(request,id):
     if request.method.upper()=="GET":
