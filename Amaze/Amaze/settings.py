@@ -126,3 +126,11 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/') # media即为图片上传的根路径
 MEDIA_URL = '/media/'
+
+#邮件配置
+EMAIL_HOST='smtp.126.com'
+EMAIL_PORT=25
+EMAIL_HOST_USER='jxjjyg@126.com'
+EMAIL_HOST_PASSWORD='yanggao123321'
+EMAIL_FROM='jxjjyg@126.com'
+EMAIL_USE_TLS = False

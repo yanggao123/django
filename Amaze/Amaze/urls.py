@@ -23,6 +23,8 @@ urlpatterns = [
     path('', person_views.Login),
     path('admin/', admin.site.urls),
     path('login/', person_views.Login,name='login'),
+    path('forgetpassword/', person_views.ForgetPassword, name='forgetpassword'),
+    path('sendforgetpasswordemail/', person_views.SendForgetPasswordEmail, name='sendforgetpasswordemail'),
     path('logout/', person_views.Logout, name='logout'),
     path('index/', person_views.Index,name='index'),
     path('userinfo/', person_views.UserInfo,name='userinfo'),

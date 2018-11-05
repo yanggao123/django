@@ -19,6 +19,11 @@ class Person(models.Model):
         else:
             return ''
 
+class PersonForgetPassword(models.Model):
+    email=models.EmailField(verbose_name='电子邮箱',max_length=30)
+    verificationcode=models.CharField(verbose_name='验证码',max_length=6)
+    createdate=models.DateTimeField(verbose_name='修改时间',auto_now_add=True)
+
 class Person_UploadFile(models.Model):
     filename=models.FileField(verbose_name='文件',upload_to='upload')
     createby=models.CharField(verbose_name='上传人',max_length=50)

@@ -5,7 +5,8 @@ from django.utils import timezone
 import xlwt
 import xlrd
 from pyecharts import Bar
-from Person.models import Person,Teacher,Course,Course_File,Person_UploadFile
+from Person.models import Person,Teacher,Course,Course_File,Person_UploadFile,PersonForgetPassword
+from Person import common
 
 
 #认证装饰器 未登录时，跳转登入页面
@@ -45,9 +46,29 @@ def Logout(request):
 
 def ForgetPassword(request):
     if request.method.upper()=="GET":
-        return render(request,'Person/ForgetPassword.html')
+        return render(request,'Person/ForgetPassword.html',{'message':''})
     else:
-        return HttpResponseRedirect(reverse('login'))
+        models=PersonForgetPassword.objects.filter(email=request.POST['email']).order_by('-createdate')
+        if len(models)==0:
+            return render(request, 'Person/ForgetPassword.html', {'message': '请先点击发送邮件'})
+        else:
+            model=models[0]
+            if model.verificationcode==request.POST['verificationcode']:
+                Person.objects.filter(email=request.POST['email']).update(password=request.POST['password'])
+                return HttpResponseRedirect(reverse('login'))
+            else:
+                return render(request, 'Person/ForgetPassword.html', {'message': '验证码输入错误，请重新输入'})
+
+def SendForgetPasswordEmail(request):
+    verificationcode=common.Random(5)
+    model=PersonForgetPassword()
+    model.email=request.GET['email']
+    model.verificationcode=verificationcode
+    model.createdate=timezone.now()
+    model.save()
+    print(request.GET['email'])
+    common.SendForgetPasswordMail(model.email,verificationcode)
+    return HttpResponse(request,'')
 
 @log_in
 def Index(request):
